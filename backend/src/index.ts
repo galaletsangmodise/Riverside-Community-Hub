@@ -2,11 +2,12 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth';
+import bookingRoutes from './routes/bookings';
 
 dotenv.config();
 
 const app = express();
-app.use(cors());
+app.use(cors({ origin: 'http://localhost:5173' }));
 app.use(express.json());
 
 app.get('/health', (_req, res) => {
@@ -14,6 +15,7 @@ app.get('/health', (_req, res) => {
 });
 
 app.use('/auth', authRoutes);
+app.use('/bookings', bookingRoutes);
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
