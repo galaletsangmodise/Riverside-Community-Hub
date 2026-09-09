@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
+import ws from 'ws';
 
 dotenv.config();
 
@@ -11,8 +12,14 @@ if (!supabaseUrl || !supabaseAnonKey || !supabaseServiceKey) {
   throw new Error('Missing Supabase env vars — check your .env file');
 }
 
-// used to verify incoming JWTs from the frontend (safe: respects RLS)
-export const supabaseAnon = createClient(supabaseUrl, supabaseAnonKey);
+const realtimeOptions = {
+  transport: ws as any,
+};
 
-// used ONLY server-side for privileged operations (bypasses RLS — never expose)
-export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
+export const supabaseAnon = createClient(supabaseUrl, supabaseAnonKey, {
+  realtime: realtimeOptions,
+});
+
+export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
+  realtime: realtimeOptions,
+});
