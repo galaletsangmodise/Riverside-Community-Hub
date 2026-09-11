@@ -6,10 +6,7 @@ import { Signup } from './pages/Signup';
 import { Booking } from './pages/Booking';
 import { AdminDashboard } from './pages/AdminDashboard';
 import { Donate } from './pages/Donate';
-
-function Home() {
-  return <div className="p-8">Home — landing page goes here</div>;
-}
+import { Home } from './pages/Home';
 
 export default function App() {
   return (
