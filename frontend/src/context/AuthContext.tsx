@@ -1,68 +1,62 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { Session } from '@supabase/supabase-js';
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { supabase } from '../lib/supabase';
+
+
+type Session = Awaited<ReturnType<typeof supabase.auth.getSession>>['data']['session'];
+type User = Awaited<ReturnType<typeof supabase.auth.getUser>>['data']['user'];
 
 type UserRole = 'member' | 'staff' | 'admin';
 
 interface AuthContextType {
-  session: Session | null;
-  role: UserRole | null;
-  loading: boolean;
-  signOut: () => Promise<void>;
+session: Session | null;
+user: User | null;
+role: UserRole | null;
+loading: boolean;
+signOut: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [session, setSession] = useState<Session | null>(null);
-  const [role, setRole] = useState<UserRole | null>(null);
-  const [loading, setLoading] = useState(true);
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+const [session, setSession] = useState<Session | null>(null);
+const [user, setUser] = useState<User | null>(null);
+const [role, setRole] = useState<UserRole | null>(null);
+const [loading, setLoading] = useState(true);
 
-  async function fetchRole(token: string) {
-    try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/me`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) throw new Error('failed to fetch role');
-      const data = await res.json();
-      setRole(data.user.role);
-    } catch {
-      setRole(null);
-    }
-  }
+useEffect(() => {
+supabase.auth.getSession().then(({ data: { session } }) => {
+setSession(session);
+const nextUser = session?.user ?? null;
+setUser(nextUser);
+const userRole = nextUser?.user_metadata?.role;
+setRole(userRole === 'member' || userRole === 'staff' || userRole === 'admin' ? userRole : null);
+setLoading(false);
+});
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      if (session) fetchRole(session.access_token);
-      setLoading(false);
-    });
+const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+setSession(session);
+const nextUser = session?.user ?? null;
+setUser(nextUser);
+const userRole = nextUser?.user_metadata?.role;
+setRole(userRole === 'member' || userRole === 'staff' || userRole === 'admin' ? userRole : null);
+});
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      if (session) {
-        fetchRole(session.access_token);
-      } else {
-        setRole(null);
-      }
-    });
+return () => subscription.unsubscribe();
+}, []);
 
-    return () => listener.subscription.unsubscribe();
-  }, []);
+const signOut = async () => {
+await supabase.auth.signOut();
+};
 
-  async function signOut() {
-    await supabase.auth.signOut();
-  }
+return (
+<AuthContext.Provider value={{ session, user, role, loading, signOut }}>
+{children}
+</AuthContext.Provider>
+);
+};
 
-  return (
-    <AuthContext.Provider value={{ session, role, loading, signOut }}>
-      {children}
-    </AuthContext.Provider>
-  );
-}
-
-export function useAuth() {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error('useAuth must be used inside AuthProvider');
-  return ctx;
-}
+export const useAuth = () => {
+const context = useContext(AuthContext);
+if (!context) throw new Error('useAuth must be used within AuthProvider');
+return context;
+};
