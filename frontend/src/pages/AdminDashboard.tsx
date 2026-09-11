@@ -32,6 +32,7 @@ export function AdminDashboard() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
 
   function authHeaders() {
     return { Authorization: `Bearer ${session?.access_token}` };
@@ -40,21 +41,30 @@ export function AdminDashboard() {
   async function loadAll() {
     if (!session) return;
     setLoading(true);
+    setLoadError('');
+    try {
+      const [bookingsRes, membersRes, statsRes] = await Promise.all([
+        fetch(`${import.meta.env.VITE_API_URL}/bookings`, { headers: authHeaders() }),
+        fetch(`${import.meta.env.VITE_API_URL}/members?search=${encodeURIComponent(search)}`, { headers: authHeaders() }),
+        fetch(`${import.meta.env.VITE_API_URL}/members/stats`, { headers: authHeaders() }),
+      ]);
 
-    const [bookingsRes, membersRes, statsRes] = await Promise.all([
-      fetch(`${import.meta.env.VITE_API_URL}/bookings`, { headers: authHeaders() }),
-      fetch(`${import.meta.env.VITE_API_URL}/members?search=${encodeURIComponent(search)}`, { headers: authHeaders() }),
-      fetch(`${import.meta.env.VITE_API_URL}/members/stats`, { headers: authHeaders() }),
-    ]);
+      if (!bookingsRes.ok || !membersRes.ok || !statsRes.ok) {
+        throw new Error('One or more requests failed');
+      }
 
-    const bookingsData = await bookingsRes.json();
-    const membersData = await membersRes.json();
-    const statsData = await statsRes.json();
+      const bookingsData = await bookingsRes.json();
+      const membersData = await membersRes.json();
+      const statsData = await statsRes.json();
 
-    setBookings(bookingsData.bookings ?? []);
-    setMembers(membersData.members ?? []);
-    setStats(statsData);
-    setLoading(false);
+      setBookings(bookingsData.bookings ?? []);
+      setMembers(membersData.members ?? []);
+      setStats(statsData);
+    } catch {
+      setLoadError('Could not load dashboard data. Check your connection and try again.');
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -79,6 +89,17 @@ export function AdminDashboard() {
   }
 
   if (loading) return <div className="p-8">Loading dashboard...</div>;
+
+  if (loadError) {
+    return (
+      <div className="p-8 text-center">
+        <p className="text-red-600 mb-3">{loadError}</p>
+        <button onClick={loadAll} className="bg-river-mid text-white rounded px-4 py-2">
+          Retry
+        </button>
+      </div>
+    );
+  }
 
   const pending = bookings.filter((b) => b.status === 'pending');
 
@@ -138,7 +159,9 @@ export function AdminDashboard() {
 
       <div>
         <h2 className="text-lg font-medium mb-3">Member directory</h2>
+        <label htmlFor="member-search" className="sr-only">Search members by name</label>
         <input
+          id="member-search"
           type="text"
           placeholder="Search by name..."
           className="w-full border rounded px-3 py-2 mb-4"
@@ -147,7 +170,7 @@ export function AdminDashboard() {
         />
         <div className="space-y-2">
           {members.map((m) => (
-            <div key={m.id} className="border border-river-mid/20 rounded-lger-mid/20 rounded-lg p-3 flex justify-between items-center text-sm">
+            <div key={m.id} className="border border-river-mid/20 rounded-lg p-3 flex justify-between items-center text-sm">
               <div>
                 <p className="font-medium">{m.full_name}</p>
                 <p className="text-gray-500">{m.contact_info ?? 'No contact info'}</p>

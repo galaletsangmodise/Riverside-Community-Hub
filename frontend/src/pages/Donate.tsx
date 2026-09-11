@@ -20,19 +20,23 @@ export function Donate() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
+const [loadError, setLoadError] = useState('');
+
   async function loadCampaigns() {
     setLoading(true);
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/donations/campaigns`);
-    const data = await res.json();
-    setCampaigns(data.campaigns ?? []);
-    if (data.campaigns?.length && !selectedId) setSelectedId(data.campaigns[0].id);
-    setLoading(false);
+    setLoadError('');
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/donations/campaigns`);
+      if (!res.ok) throw new Error('Failed to load campaigns');
+      const data = await res.json();
+      setCampaigns(data.campaigns ?? []);
+      if (data.campaigns?.length && !selectedId) setSelectedId(data.campaigns[0].id);
+    } catch {
+      setLoadError('Could not load donation campaigns. Check your connection and try again.');
+    } finally {
+      setLoading(false);
+    }
   }
-
-  useEffect(() => {
-    loadCampaigns();
-  }, []);
-
   async function handleDonate(e: React.FormEvent) {
     e.preventDefault();
     setMessage('');
@@ -70,7 +74,17 @@ export function Donate() {
   }
 
   if (loading) return <div className="p-8">Loading campaigns...</div>;
-
+    if (loadError) {
+    return (
+      <div className="p-8 text-center">
+        <p className="text-red-600 mb-3">{loadError}</p>
+        <button onClick={loadCampaigns} className="bg-river-mid text-white rounded px-4 py-2">
+          Retry
+        </button>
+      </div>
+    );
+  }
+  
   return (
     <div className="max-w-xl mx-auto p-8">
       <h1 className="text-2xl font-semibold mb-6">Support Riverside</h1>
