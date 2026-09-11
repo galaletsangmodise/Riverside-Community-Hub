@@ -88,15 +88,15 @@ export function AdminDashboard() {
         <h1 className="text-2xl font-semibold mb-4">Dashboard</h1>
         {stats && (
           <div className="grid grid-cols-3 gap-4">
-            <div className="border rounded-lg p-4">
+            <div className="border border-river-mid/20 rounded-lg p-4">
               <p className="text-2xl font-semibold">{stats.bookingsThisMonth}</p>
               <p className="text-sm text-gray-500">Bookings this month</p>
             </div>
-            <div className="border rounded-lg p-4">
+            <div className="border border-river-mid/20 rounded-lg p-4">
               <p className="text-2xl font-semibold">R{stats.totalDonations.toLocaleString()}</p>
               <p className="text-sm text-gray-500">Total donations</p>
             </div>
-            <div className="border rounded-lg p-4">
+            <div className="border border-river-mid/20 rounded-lg p-4">
               <p className="text-2xl font-semibold">{stats.activeMembers}</p>
               <p className="text-sm text-gray-500">Active members</p>
             </div>
@@ -109,7 +109,7 @@ export function AdminDashboard() {
         {pending.length === 0 && <p className="text-gray-500 text-sm">No pending bookings.</p>}
         <div className="space-y-3">
           {pending.map((b) => (
-            <div key={b.id} className="border rounded-lg p-4 flex justify-between items-center">
+            <div key={b.id} className="border border-river-mid/20 rounded-lg p-4 flex justify-between items-center">
               <div>
                 <p className="font-medium">{b.resources.name}</p>
                 <p className="text-sm text-gray-600">{b.profiles.full_name}</p>
@@ -120,7 +120,7 @@ export function AdminDashboard() {
               <div className="flex gap-2">
                 <button
                   onClick={() => updateStatus(b.id, 'approved')}
-                  className="bg-green-600 text-white rounded px-3 py-1 text-sm"
+                  className="bg-river-mid text-white rounded px-3 py-1 text-sm"
                 >
                   Approve
                 </button>
@@ -147,7 +147,7 @@ export function AdminDashboard() {
         />
         <div className="space-y-2">
           {members.map((m) => (
-            <div key={m.id} className="border rounded-lg p-3 flex justify-between items-center text-sm">
+            <div key={m.id} className="border border-river-mid/20 rounded-lger-mid/20 rounded-lg p-3 flex justify-between items-center text-sm">
               <div>
                 <p className="font-medium">{m.full_name}</p>
                 <p className="text-gray-500">{m.contact_info ?? 'No contact info'}</p>

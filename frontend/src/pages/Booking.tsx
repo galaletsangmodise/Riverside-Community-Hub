@@ -68,7 +68,7 @@ export function Booking() {
 
       <div className="grid gap-4 mb-8">
         {resources.map((r) => (
-          <div key={r.id} className="border rounded-lg p-4">
+          <div key={r.id} className="border border-river-mid/20 rounded-lg p-4">
             <div className="flex justify-between items-start">
               <div>
                 <h3 className="font-medium">{r.name}</h3>
@@ -111,7 +111,7 @@ export function Booking() {
           />
         </div>
         {message && <p className="text-sm">{message}</p>}
-        <button type="submit" className="bg-blue-600 text-white rounded px-4 py-2">
+        <button type="submit" className="bg-river-mid text-white rounded px-4 py-2">
           Request booking
         </button>
       </form>

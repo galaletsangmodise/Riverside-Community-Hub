@@ -79,14 +79,14 @@ export function Donate() {
         {campaigns.map((c) => {
           const pct = Math.min(100, Math.round((c.current_amount / c.goal_amount) * 100));
           return (
-            <div key={c.id} className="border rounded-lg p-4">
+            <div key={c.id} className="border border-river-mid/20 rounded-lg p-4">
               <h3 className="font-medium mb-1">{c.title}</h3>
               <p className="text-sm text-gray-600 mb-2">
                 R{c.current_amount.toLocaleString()} raised of R{c.goal_amount.toLocaleString()} goal
               </p>
               <div className="w-full bg-gray-200 rounded-full h-3">
                 <div
-                  className="bg-blue-600 h-3 rounded-full transition-all"
+                  className="bg-river-mid h-3 rounded-full transition-all"
                   style={{ width: `${pct}%` }}
                 />
               </div>
@@ -140,7 +140,7 @@ export function Donate() {
         <button
           type="submit"
           disabled={submitting}
-          className="w-full bg-blue-600 text-white rounded py-2 disabled:opacity-50"
+          className="w-full bg-river-mid text-white rounded py-2 disabled:opacity-50"
         >
           {submitting ? 'Processing...' : 'Donate'}
         </button>

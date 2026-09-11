@@ -53,7 +53,7 @@ export function Signup() {
         <p className="text-sm text-gray-600">
           We sent a verification link to {email}. Click it, then log in.
         </p>
-        <Link to="/login" className="text-blue-600 text-sm block mt-4">Go to login</Link>
+        <Link to="/login" className="text-river-deep text-sm block mt-4">Go to login</Link>
       </div>
     );
   }
@@ -90,13 +90,13 @@ export function Signup() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-blue-600 text-white rounded py-2 disabled:opacity-50"
+          className="w-full bg-river-mid text-white rounded py-2 disabled:opacity-50"
         >
           {loading ? 'Creating account...' : 'Sign up'}
         </button>
       </form>
       <p className="text-sm mt-4">
-        Already have an account? <Link to="/login" className="text-blue-600">Log in</Link>
+        Already have an account? <Link to="/login" className="text-river-deep">Log in</Link>
       </p>
     </div>
   );
