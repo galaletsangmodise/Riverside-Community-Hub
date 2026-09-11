@@ -7,6 +7,7 @@ export function Signup() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -17,30 +18,44 @@ export function Signup() {
 
     const { data, error: signUpError } = await supabase.auth.signUp({ email, password });
 
-    if (signUpError || !data.session) {
-      setError(signUpError?.message ?? 'Signup failed — check your email for a verification link');
+    if (signUpError || !data.user) {
+      setError(signUpError?.message ?? 'Signup failed');
       setLoading(false);
       return;
     }
 
-    // create the profiles row via backend
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/signup`, {
+   
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/complete-signup`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${data.session.access_token}`,
-      },
-      body: JSON.stringify({ fullName }),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: data.user.id, fullName }),
     });
+
+    setLoading(false);
 
     if (!res.ok) {
       const body = await res.json();
       setError(body.error ?? 'Failed to create profile');
-      setLoading(false);
       return;
     }
 
-    navigate('/');
+    if (data.session) {
+      navigate('/');
+    } else {
+      setSuccess(true);
+    }
+  }
+
+  if (success) {
+    return (
+      <div className="max-w-sm mx-auto mt-16 p-6 border rounded-lg text-center">
+        <h1 className="text-xl font-semibold mb-2">Check your email</h1>
+        <p className="text-sm text-gray-600">
+          We sent a verification link to {email}. Click it, then log in.
+        </p>
+        <Link to="/login" className="text-blue-600 text-sm block mt-4">Go to login</Link>
+      </div>
+    );
   }
 
   return (
