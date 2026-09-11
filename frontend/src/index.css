@@ -1,1 +1,16 @@
 @import "tailwindcss";
+
+@theme {
+  --color-river-deep: #1B4B5A;
+  --color-river-mid: #4A9B8E;
+  --color-river-mist: #E8F4F0;
+  --color-river-sand: #F7F5F0;
+  --color-river-ink: #2D2A26;
+  --color-river-clay: #D4A574;
+  --font-sans: 'Inter', system-ui, sans-serif;
+}
+
+body {
+  background-color: var(--color-river-sand);
+  color: var(--color-river-ink);
+}
