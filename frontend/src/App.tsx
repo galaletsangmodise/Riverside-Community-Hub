@@ -3,13 +3,11 @@ import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Login } from './pages/Login';
 import { Signup } from './pages/Signup';
+import { Booking } from './pages/Booking';
+import { AdminDashboard } from './pages/AdminDashboard';
 
 function Home() {
-  return <div className="p-8">Home — landing page goes here</div>;
-}
-
-function AdminDashboard() {
-  return <div className="p-8">Admin dashboard</div>;
+  return <div className="p-8">Home — landing page goes here </div>;
 }
 
 export default function App() {
@@ -20,6 +18,14 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/" element={<Home />} />
+          <Route
+            path="/book"
+            element={
+              <ProtectedRoute>
+                <Booking />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/admin"
             element={
