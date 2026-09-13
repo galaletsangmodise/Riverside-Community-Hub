@@ -104,84 +104,86 @@ export function AdminDashboard() {
   const pending = bookings.filter((b) => b.status === 'pending');
 
   return (
-    <div className="max-w-4xl mx-auto p-8 space-y-10">
-      <div>
-        <h1 className="text-2xl font-semibold mb-4">Dashboard</h1>
-        {stats && (
-          <div className="grid grid-cols-3 gap-4">
-            <div className="border border-river-mid/20 rounded-lg p-4">
-              <p className="text-2xl font-semibold">{stats.bookingsThisMonth}</p>
-              <p className="text-sm text-gray-500">Bookings this month</p>
-            </div>
-            <div className="border border-river-mid/20 rounded-lg p-4">
-              <p className="text-2xl font-semibold">R{stats.totalDonations.toLocaleString()}</p>
-              <p className="text-sm text-gray-500">Total donations</p>
-            </div>
-            <div className="border border-river-mid/20 rounded-lg p-4">
-              <p className="text-2xl font-semibold">{stats.activeMembers}</p>
-              <p className="text-sm text-gray-500">Active members</p>
-            </div>
-          </div>
-        )}
-      </div>
-
-      <div>
-        <h2 className="text-lg font-medium mb-3">Pending bookings</h2>
-        {pending.length === 0 && <p className="text-gray-500 text-sm">No pending bookings.</p>}
-        <div className="space-y-3">
-          {pending.map((b) => (
-            <div key={b.id} className="border border-river-mid/20 rounded-lg p-4 flex justify-between items-center">
-              <div>
-                <p className="font-medium">{b.resources.name}</p>
-                <p className="text-sm text-gray-600">{b.profiles.full_name}</p>
-                <p className="text-sm text-gray-500">
-                  {new Date(b.start_time).toLocaleString()} → {new Date(b.end_time).toLocaleString()}
-                </p>
+    <div className="min-h-[80vh] bg-gradient-to-b from-sky-50 to-river-mist">
+      <div className="max-w-4xl mx-auto p-8 space-y-10">
+        <div>
+          <h1 className="text-2xl font-semibold mb-4">Dashboard</h1>
+          {stats && (
+            <div className="grid grid-cols-3 gap-4">
+              <div className="bg-white border border-river-mid/20 rounded-lg p-4">
+                <p className="text-2xl font-semibold">{stats.bookingsThisMonth}</p>
+                <p className="text-sm text-gray-500">Bookings this month</p>
               </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => updateStatus(b.id, 'approved')}
-                  className="bg-river-mid text-white rounded px-3 py-1 text-sm"
-                >
-                  Approve
-                </button>
-                <button
-                  onClick={() => updateStatus(b.id, 'rejected')}
-                  className="bg-red-600 text-white rounded px-3 py-1 text-sm"
-                >
-                  Reject
-                </button>
+              <div className="bg-white border border-river-mid/20 rounded-lg p-4">
+                <p className="text-2xl font-semibold">R{stats.totalDonations.toLocaleString()}</p>
+                <p className="text-sm text-gray-500">Total donations</p>
+              </div>
+              <div className="bg-white border border-river-mid/20 rounded-lg p-4">
+                <p className="text-2xl font-semibold">{stats.activeMembers}</p>
+                <p className="text-sm text-gray-500">Active members</p>
               </div>
             </div>
-          ))}
+          )}
         </div>
-      </div>
 
-      <div>
-        <h2 className="text-lg font-medium mb-3">Member directory</h2>
-        <label htmlFor="member-search" className="sr-only">Search members by name</label>
-        <input
-          id="member-search"
-          type="text"
-          placeholder="Search by name..."
-          className="w-full border rounded px-3 py-2 mb-4"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <div className="space-y-2">
-          {members.map((m) => (
-            <div key={m.id} className="border border-river-mid/20 rounded-lg p-3 flex justify-between items-center text-sm">
-              <div>
-                <p className="font-medium">{m.full_name}</p>
-                <p className="text-gray-500">{m.contact_info ?? 'No contact info'}</p>
+        <div>
+          <h2 className="text-lg font-medium mb-3">Pending bookings</h2>
+          {pending.length === 0 && <p className="text-gray-500 text-sm">No pending bookings.</p>}
+          <div className="space-y-3">
+            {pending.map((b) => (
+              <div key={b.id} className="bg-white border border-river-mid/20 rounded-lg p-4 flex justify-between items-center">
+                <div>
+                  <p className="font-medium">{b.resources.name}</p>
+                  <p className="text-sm text-gray-600">{b.profiles.full_name}</p>
+                  <p className="text-sm text-gray-500">
+                    {new Date(b.start_time).toLocaleString()} → {new Date(b.end_time).toLocaleString()}
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => updateStatus(b.id, 'approved')}
+                    className="bg-river-mid text-white rounded px-3 py-1 text-sm"
+                  >
+                    Approve
+                  </button>
+                  <button
+                    onClick={() => updateStatus(b.id, 'rejected')}
+                    className="bg-red-600 text-white rounded px-3 py-1 text-sm"
+                  >
+                    Reject
+                  </button>
+                </div>
               </div>
-              <div className="text-right">
-                <p className="uppercase text-xs bg-gray-100 inline-block px-2 py-1 rounded">{m.role}</p>
-                <p className="text-gray-500 mt-1">{m.membership_tier}</p>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <h2 className="text-lg font-medium mb-3">Member directory</h2>
+          <label htmlFor="member-search" className="sr-only">Search members by name</label>
+          <input
+            id="member-search"
+            type="text"
+            placeholder="Search by name..."
+            className="w-full border rounded px-3 py-2 mb-4"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <div className="space-y-2">
+            {members.map((m) => (
+              <div key={m.id} className="bg-white border border-river-mid/20 rounded-lg p-3 flex justify-between items-center text-sm">
+                <div>
+                  <p className="font-medium">{m.full_name}</p>
+                  <p className="text-gray-500">{m.contact_info ?? 'No contact info'}</p>
+                </div>
+                <div className="text-right">
+                  <p className="uppercase text-xs bg-gray-100 inline-block px-2 py-1 rounded">{m.role}</p>
+                  <p className="text-gray-500 mt-1">{m.membership_tier}</p>
+                </div>
               </div>
-            </div>
-          ))}
-          {members.length === 0 && <p className="text-gray-500 text-sm">No members found.</p>}
+            ))}
+            {members.length === 0 && <p className="text-gray-500 text-sm">No members found.</p>}
+          </div>
         </div>
       </div>
     </div>
