@@ -46,7 +46,7 @@ export function Donate() {
     setMessage('');
     setSubmitting(true);
 
-    const numericAmount = parseFloat(amount);
+    const numericAmount = parseInt(amount, 10);
     if (!selectedId || !numericAmount || numericAmount <= 0) {
       setMessage('Please select a campaign and enter a valid amount.');
       setSubmitting(false);
@@ -149,16 +149,16 @@ export function Donate() {
               Amount (R)
             </label>
             <input
-              id="donation-amount"
-              type="number"
-              min="1"
-              step="0.01"
-              placeholder="Amount (R)"
-              className="w-full border rounded px-3 py-2"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              required
-            />
+         id="donation-amount"
+         type="number"
+         min="1"
+         step="1"
+         placeholder="Amount (R)"
+         className="w-full border rounded px-3 py-2"
+         value={amount}
+         onChange={(e) => setAmount(e.target.value.replace(/[^0-9]/g, ''))}
+         required
+    />
 
             <label className="flex items-center gap-2 text-sm">
               <input

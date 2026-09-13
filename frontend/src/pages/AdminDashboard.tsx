@@ -69,7 +69,7 @@ export function AdminDashboard() {
 
   useEffect(() => {
     loadAll();
-  }, [session]);
+  }, [session?.user?.id]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
