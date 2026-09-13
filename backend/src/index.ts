@@ -10,7 +10,7 @@ import memberRoutes from './routes/members';
 dotenv.config();
 
 const app = express();
-app.use(cors({ origin: 'https://riverside-community-hub-plum.vercel.app/' }));
+app.use(cors({ origin: 'https://riverside-community-hub-delta.vercel.app/' }));
 app.use(express.json());
 
 app.get('/health', (_req, res) => {
