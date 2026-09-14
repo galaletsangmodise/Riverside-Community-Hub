@@ -5,6 +5,23 @@ import { requireRole } from '../middleware/requireRole';
 
 const router = Router();
 
+const MEMBERSHIP_DURATION_DAYS = 365; 
+const EXPIRY_WARNING_DAYS = 30;
+
+function getMembershipStatus(joinedAt: string): 'active' | 'expiring_soon' | 'expired' {
+  const joined = new Date(joinedAt);
+  const expiryDate = new Date(joined);
+  expiryDate.setDate(expiryDate.getDate() + MEMBERSHIP_DURATION_DAYS);
+
+  const now = new Date();
+  const daysUntilExpiry = Math.ceil((expiryDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+
+  if (daysUntilExpiry < 0) return 'expired';
+  if (daysUntilExpiry <= EXPIRY_WARNING_DAYS) return 'expiring_soon';
+  return 'active';
+}
+
+
 router.get('/', requireAuth, requireRole(['staff', 'admin']), async (req, res) => {
   const search = (req.query.search as string) ?? '';
   const page = parseInt(req.query.page as string) || 1;
@@ -25,7 +42,13 @@ router.get('/', requireAuth, requireRole(['staff', 'admin']), async (req, res) =
   const { data, error, count } = await query;
 
   if (error) return res.status(400).json({ error: error.message });
-  res.json({ members: data, total: count, page, pageSize });
+
+  const membersWithStatus = (data ?? []).map((m) => ({
+    ...m,
+    membership_status: getMembershipStatus(m.joined_at),
+  }));
+
+  res.json({ members: membersWithStatus, total: count, page, pageSize });
 });
 
 

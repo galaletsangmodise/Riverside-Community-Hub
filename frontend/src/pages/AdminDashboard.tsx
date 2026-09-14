@@ -17,6 +17,7 @@ interface Member {
   role: string;
   membership_tier: string;
   joined_at: string;
+  membership_status: 'active' | 'expiring_soon' | 'expired';
 }
 
 interface Stats {
@@ -179,6 +180,12 @@ export function AdminDashboard() {
                 <div className="text-right">
                   <p className="uppercase text-xs bg-gray-100 inline-block px-2 py-1 rounded">{m.role}</p>
                   <p className="text-gray-500 mt-1">{m.membership_tier}</p>
+                  {m.membership_status === 'expiring_soon' && (
+                    <p className="text-xs text-orange-600 font-medium mt-1">Expiring soon</p>
+                  )}
+                  {m.membership_status === 'expired' && (
+                    <p className="text-xs text-red-600 font-medium mt-1">Expired</p>
+                  )}
                 </div>
               </div>
             ))}
